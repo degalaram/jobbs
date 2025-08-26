@@ -8,7 +8,7 @@ const getApiBaseUrl = () => {
     
     // If deployed on separate platforms, point to backend
     if (hostname.includes('vercel.app') || hostname.includes('netlify.app') || hostname.includes('surge.sh')) {
-      // Your actual Railway backend URL
+      // Your actual Railway backend URL (Public URL)
       return 'https://jobportalbackend-production-8562.up.railway.app';
     }
   }
