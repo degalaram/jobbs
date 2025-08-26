@@ -9,10 +9,9 @@ const getApiBaseUrl = () => {
     // If deployed on separate platforms, point to backend
     if (hostname.includes('vercel.app') || hostname.includes('netlify.app') || hostname.includes('surge.sh')) {
       // Your actual Railway backend URL (Public URL)
-      return https://airy-expression-production.up.railway.app
+      return 'https://airy-expression-production.up.railway.app';
     }
   }
-
 
   
   // For local development and same-server deployments
@@ -54,25 +53,26 @@ export const getQueryFn: <T>(options: {
       credentials: "include",
     });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+    if (res.status === 401) {
+      if (unauthorizedBehavior === "returnNull") {
+        return null;
+      }
+      throw new Error("Unauthorized");
     }
 
     await throwIfResNotOk(res);
-    return await res.json();
+    return res.json();
   };
 
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
-    },
-    mutations: {
-      retry: false,
+      queryFn: getQueryFn({ on401: "returnNull" }),
+      staleTime: 1000 * 60 * 10, // 10 minutes
+      retry: (failureCount, error) => {
+        if (error.message === "Unauthorized") return false;
+        return failureCount < 3;
+      },
     },
   },
 });
