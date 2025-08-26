@@ -12,6 +12,8 @@ const getApiBaseUrl = () => {
       return 'https://jobportalbackend-production-8562.up.railway.app';
     }
   }
+
+
   
   // For local development and same-server deployments
   return '';
